@@ -71,3 +71,29 @@ def pregunta_01():
 
 
     """
+
+import pandas as pd
+import os
+
+def creacion(carpeta_entrada, archivo_salida):
+    datos = []
+    for sentimiento in ['positive', 'negative', 'neutral']:
+        ruta_sentimiento = os.path.join(carpeta_entrada, sentimiento)
+        if os.path.exists(ruta_sentimiento):  
+            for nombre_archivo in os.listdir(ruta_sentimiento):
+                if nombre_archivo.endswith('.txt'):
+                    with open(os.path.join(ruta_sentimiento, nombre_archivo), 'r') as archivo:
+                        frase = archivo.read().strip()
+                        datos.append({'phrase': frase, 'target': sentimiento})
+    
+    df = pd.DataFrame(datos)
+    df.to_csv(archivo_salida, index=False)
+
+# Crear el directorio de salida si no existe
+os.makedirs('files/output', exist_ok=True)
+
+# Crear train_dataset.csv
+creacion('files/input/train', 'files/output/train_dataset.csv')
+
+# Crear test_dataset.csv
+creacion('files/input/test', 'files/output/test_dataset.csv')
